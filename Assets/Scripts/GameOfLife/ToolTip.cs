@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
+//Use for Mouse-Over Tooltip
 public class ToolTip : MonoBehaviour
 {
     static ToolTip instance;

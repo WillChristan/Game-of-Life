@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+//Class to assists with Mouse-Over Tooltip
 public class SubBlockEvent : MonoBehaviour
 {
     string info;

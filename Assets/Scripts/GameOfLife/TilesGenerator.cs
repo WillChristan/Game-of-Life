@@ -12,6 +12,7 @@ public class Cell
     bool isAlive = false;
     bool prevState = false;
 
+    //Assign variables at construction
     public Cell(CellUnit newCellObj, Vector2 newPosition) => (cellObj, position) = (newCellObj, newPosition);
 
     public void AssignNeighbors(int[] neighborList)
@@ -84,7 +85,6 @@ public class TilesGenerator : MonoBehaviour
 
     bool debugOption;
 
-    // Start is called before the first frame update
     void Awake()
     {
 
@@ -97,15 +97,18 @@ public class TilesGenerator : MonoBehaviour
     }
     public void Create(uint newRow, uint newCol, bool _debugOption)
     {
+        //Store variables
         cellRow = newRow;
         cellCol = newCol;
-
-        Cells = new Cell[cellRow * cellCol];
-
-        screenMinLimit = new Vector2((cellRow - 1) * -0.5f, (cellCol - 1) * -0.5f);
-
         debugOption = _debugOption;
 
+        //Create the array to hold all cells in the grid
+        Cells = new Cell[cellRow * cellCol];
+
+        //Figure out the starting/bottom left corner position
+        screenMinLimit = new Vector2((cellRow - 1) * -0.5f, (cellCol - 1) * -0.5f);
+
+        //Do the math...
         GenerateTiles();
     }
 
@@ -120,10 +123,11 @@ public class TilesGenerator : MonoBehaviour
         Vector3 pos = Vector3.zero;
         pos.x = screenMinLimit.x;
         pos.y = screenMinLimit.y;
-        pos.z = 0f; //Always zero
+        pos.z = 0f; //Depth always zero
 
         int indexCount = 0;
-
+        
+        //Instantiate the tiles and position accordingly
         for (int i = 0; i < cellCol; i++)
         {
             for (int j = 0; j < cellRow; j++)
@@ -168,6 +172,7 @@ public class TilesGenerator : MonoBehaviour
         cornerBlocks[3] = (int)((cellRow * cellCol) - 1); //Top Right block   
 
         bool earlyBreak = false;
+
         ///Find and Assign neighbouring cells
         for (int i = 0; i < Cells.Length; i++)
         {
@@ -191,28 +196,28 @@ public class TilesGenerator : MonoBehaviour
             }
                 
 
-            //If LEFT side
+            //If LEFT edge tiles
             if (i % cellRow == 0)
             {
                 Cells[i].AssignNeighbors(GetNeighborL(i, (int)cellRow));
                 continue;
             }
 
-            //If BOTTOM 
+            //If BOTTOM edge tiles
             else if (i < cellRow)
             {
                 Cells[i].AssignNeighbors(GetNeighborB(i, (int)cellRow, (int)cellCol));
                 continue;
             }
 
-            //If TOP
+            //If TOP edge tiles
             else if (i > cellRow * (cellCol - 1))
             {
                 Cells[i].AssignNeighbors(GetNeighborT(i, (int)cellRow, (int)cellCol));
                 continue;
             }
 
-            //If RIGHT side
+            //If RIGHT edge tiles
             else
             { 
                 foreach (int y in rightSideCheckVals)
@@ -233,7 +238,7 @@ public class TilesGenerator : MonoBehaviour
             }
 
 
-            //If just cells in the middle of the grid then...
+            //For all other cells in the CENTER of the grid
             Cells[i].AssignNeighbors(GetNeighbor(i, (int)cellRow));
         }
 

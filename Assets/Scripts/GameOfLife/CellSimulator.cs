@@ -14,8 +14,8 @@ public class CellSimulator : MonoBehaviour
     float counter;
     float randPercent;
     int maxCellIndex;
-    bool runningSimulation;
     uint generationElapsed;
+    bool runningSimulation;
 
 
     // Update is called once per frame
@@ -25,14 +25,10 @@ public class CellSimulator : MonoBehaviour
         
         timeInterval = 0.2f;
         counter = timeInterval;
-
         timeInc = 0.01f;
-
         randPercent = 0.2f; //20% Percent of total max cell number per randomize
         maxCellIndex = Cells.Length - 1;
-
         generationElapsed = 0;
-
         runningSimulation = false;
     }
 
@@ -61,6 +57,7 @@ public class CellSimulator : MonoBehaviour
 
     }
     
+    //Randomizer value input
     public void ChangeRandPercent(float value)
     {
         if (value < 0f || value > 100f) return;
@@ -68,6 +65,7 @@ public class CellSimulator : MonoBehaviour
         randPercent = value * 0.01f;
     }
 
+    //Randomizer UI output
     public float GetRandPercent()
     {
         //Convert back into percent form
@@ -102,6 +100,7 @@ public class CellSimulator : MonoBehaviour
         UpdateNeighborCounts(temp.neighbors, temp.GetState());
     }
 
+    //Reset/Deactivate all cells
     public void ResetToBase()
     {
         runningSimulation = false;
@@ -187,14 +186,21 @@ public class CellSimulator : MonoBehaviour
 
     void RunSimulation()
     {
+        //RULES
+        //Cell with <1 neighbour dies
+        //Cell with >4 neightbours dies
+        //Cell with 2 or 3 neighbours lives
+        //Empty with 3 neighbours lives
+
         //Evaluating the state of each cells in response to its neighbourCount
-        foreach(Cell cell in Cells)
+        foreach (Cell cell in Cells)
         {
             int count = cell.neighborCount;
 
             //If Alive
             if (cell.GetState())
             {
+                //If less than 2 neighbours or more than 3 neighbours...
                 if (count < 2 || count > 3)
                 {
                     cell.SwitchState();
@@ -207,6 +213,7 @@ public class CellSimulator : MonoBehaviour
             //If Dead
             else
             {
+                //If there are 3 live neighbours
                 if (count == 3)
                 {
                     cell.SwitchState();
@@ -220,7 +227,7 @@ public class CellSimulator : MonoBehaviour
         }
 
         //Update the neighbourCount AFTER all cells' state have been evaluated
-        //Updating the neighbourCount during evalution would cause constant rippling 
+        //Updating the neighbourCount during evaluation would cause constant rippling 
         foreach (Cell cell in Cells)
         {
             if (!cell.GetStateComparison())
@@ -230,10 +237,4 @@ public class CellSimulator : MonoBehaviour
         }
         generationElapsed++;
     }
-
-    //RULES
-    //Cell with <1 neighbour dies
-    //Cell with >4 neightbours dies
-    //Cell with 2 or 3 neighbours lives
-    //Empty with 3 neighbours lives
 }

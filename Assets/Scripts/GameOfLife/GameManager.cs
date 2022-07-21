@@ -11,13 +11,27 @@ public class GameManager : MonoBehaviour
     public bool enableDebugText = false;
     public bool showIdOrCount = false;
 
+    //20 by 10 Cells is the current optimal distance for the camera
+    [Range(5, 150)]
+    public ushort cellRow;
+
+    [Range(5, 150)]
+    public ushort cellCol;
+
     TilesGenerator tilesGenerator;
     CellSimulator cellSimulator;
     UIHub uiHub;
     
-    Vector3 cameraPos; //Adjusting camera zoom
+    //Used for adjusting camera zoom according to the size of the grid generated
+    Vector3 cameraPos; 
 
-    bool IsMouseOverGameWindow
+    //Frequently used temp variables
+    Vector2 initialMousePos;
+    Vector2 deltaMousePos;
+
+    bool isSimulating;
+
+    bool isMouseOverGameWindow
     {
         get
         {
@@ -26,17 +40,6 @@ public class GameManager : MonoBehaviour
     }
 
 
-    //20 by 10 Cells is the current optimal distance for the camera
-    [Range(5, 150)]
-    public ushort cellRow;
-
-    [Range(5, 150)]
-    public ushort cellCol;
-
-    bool isSimulating;
-
-
-    // Start is called before the first frame update
     void Awake()
     {
         tilesGenerator = GetComponent<TilesGenerator>();
@@ -54,9 +57,8 @@ public class GameManager : MonoBehaviour
         cameraPos = mainCam.transform.position;
         float hRatio = (cellRow - 20f) * 0.5f;
         float vRatio = (cellCol - 10f) * 0.5f;
-
+        
         cameraPos.z -= hRatio > vRatio ? hRatio : vRatio;
-
         mainCam.transform.position = cameraPos;
 
         //Set UI Frequency Display
@@ -84,28 +86,28 @@ public class GameManager : MonoBehaviour
 
         if (Physics.Raycast(ray, out hit))
         {
+            //If target hit is a cell object...
             if (hit.transform.tag == "CellObject")
             {
+                //Get its index/id value
                 int testId = hit.transform.GetComponentInParent<CellUnit>().id;
 
+                //Switch the Cell On/Off
                 cellSimulator.SelectCell(testId);
             }
         }
     }
 
-    Vector2 initialMousePos;
-    Vector2 deltaMousePos;
-
     void RightMouseClick()
     {
-        if (!IsMouseOverGameWindow) return;
+        if (!isMouseOverGameWindow) return;
 
         initialMousePos = Input.mousePosition;
     }
 
     void RightMouseHold()
     {
-        if (!IsMouseOverGameWindow) return;
+        if (!isMouseOverGameWindow) return;
 
         cameraPos = mainCam.transform.position;
         deltaMousePos = (Vector2)Input.mousePosition - initialMousePos;
@@ -119,7 +121,7 @@ public class GameManager : MonoBehaviour
 
     void MouseScroll()
     {
-        if (!IsMouseOverGameWindow) return;
+        if (!isMouseOverGameWindow) return;
 
         float scrollVal =  Input.mouseScrollDelta.y;
 
@@ -187,8 +189,4 @@ public class GameManager : MonoBehaviour
 
         cellSimulator.ChangeRandPercent(tryNumber);
     }
-
-    //Need simulation //Life cycle speed
-    //Need to clean up Randomizer and Mouse Select (is it only on initial or also during simulation? What for?)
-    
 }

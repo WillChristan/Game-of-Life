@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
+//A single Cell/Tile object
 public class CellUnit : MonoBehaviour
 {
     [HideInInspector]
@@ -14,19 +15,16 @@ public class CellUnit : MonoBehaviour
     Color colorBase;
     Color colorLive;
 
-    //Each cell have 8 neighbours...
 
-    // Start is called before the first frame update
     void Awake()
     {
         tileObj = this.gameObject;
         material = GetComponentInChildren<MeshRenderer>().material;
+        tMesh = GetComponentInChildren<TextMeshPro>();
 
-        colorBase = Color.black;
+        colorBase = Color.white;
         material.color = colorBase;
         colorLive = Color.cyan;
-
-        tMesh = GetComponentInChildren<TextMeshPro>();
     }
 
     // Update is called once per frame
